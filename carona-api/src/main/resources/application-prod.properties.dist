@@ -1,0 +1,16 @@
+spring.datasource.url=jdbc:postgresql://${APP_DATABASE_HOST}:${APP_DATABASE_PORT:5432}/${APP_DATABASE_NAME}
+spring.datasource.username=${APP_DATABASE_USERNAME}
+spring.datasource.password=${APP_DATABASE_PASSWORD}
+
+spring.mail.host=${APP_MAIL_HOST:localhost}
+spring.mail.port=${APP_MAIL_PORT:1025}
+spring.mail.username=${APP_MAIL_USERNAME:}
+spring.mail.password=${APP_MAIL_PASSWORD:}
+spring.mail.protocol=${APP_MAIL_PROTOCOL:smtp}
+spring.mail.default-encoding=UTF-8
+
+#spring.mail.properties.mail.smtp.auth=true
+#spring.mail.properties.mail.smtp.connectiontimeout=5000
+#spring.mail.properties.mail.smtp.timeout=5000
+#spring.mail.properties.mail.smtp.writetimeout=5000  # TLS , port 587
+#spring.mail.properties.mail.smtp.starttls.enable=true
