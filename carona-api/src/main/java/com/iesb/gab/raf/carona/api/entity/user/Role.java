@@ -1,6 +1,7 @@
 package com.iesb.gab.raf.carona.api.entity.user;
 
 import com.iesb.gab.raf.carona.api.entity.AbstractBaseEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -26,19 +28,21 @@ public class Role extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        // @TODO Implement toString method
-        return null;
+        return "Role{" +
+                "name='" + name + '\'' +
+                '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        // @TODO Implement equals method
-        return false;
+        if (this == o) return true;
+        if (!(o instanceof Role role)) return false;
+
+        return getId() != null && Objects.equals(getId(), role.getId());
     }
 
     @Override
     public int hashCode() {
-        // @TODO Implement equals hashCode
-        return 0;
+        return Objects.hash(getId());
     }
 }
