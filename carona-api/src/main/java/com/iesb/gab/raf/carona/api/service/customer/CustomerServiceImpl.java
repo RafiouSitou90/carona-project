@@ -8,6 +8,7 @@ import com.iesb.gab.raf.carona.api.entity.customer.Customer;
 import com.iesb.gab.raf.carona.api.entity.user.ConfirmationToken;
 import com.iesb.gab.raf.carona.api.entity.user.Role;
 import com.iesb.gab.raf.carona.api.entity.user.User;
+import com.iesb.gab.raf.carona.api.event.customer.CustomerAccountConfirmedEvent;
 import com.iesb.gab.raf.carona.api.event.customer.CustomerCreatedEvent;
 import com.iesb.gab.raf.carona.api.exception.ResourceAlreadyExistsException;
 import com.iesb.gab.raf.carona.api.payload.request.customer.CustomerCreateRequest;
@@ -74,9 +75,32 @@ public class CustomerServiceImpl implements CustomerService {
         return new CustomerFullDetailsDto(customer);
     }
 
+    @Override
+    public void confirmAccount(String token) {
+        ConfirmationToken confirmationToken = confirmationTokenService.getByToken(token);
+
+        if (confirmationToken.getConfirmedAt() != null) {
+            throw new IllegalStateException("Email already confirmed");
+        }
+
+        Instant expiredAt = confirmationToken.getExpiresAt();
+
+        if (expiredAt.isBefore(Instant.now())) {
+            throw new IllegalStateException("Confirmation Token expired");
+        }
+
+        confirmationToken = confirmationTokenService.setConfirmedAt(token);
+        publishCustomerConfirmedEvent(confirmationToken.getUser().getCustomer());
+    }
+
     private void publishCustomerCreatedEvent(final Customer customer) {
         CustomerCreatedEvent customerCreatedEvent = new CustomerCreatedEvent(customer, this);
         eventPublisher.publishEvent(customerCreatedEvent);
+    }
+
+    private void publishCustomerConfirmedEvent(final Customer customer) {
+        CustomerAccountConfirmedEvent customerAccountConfirmedEvent = new CustomerAccountConfirmedEvent(customer, this);
+        eventPublisher.publishEvent(customerAccountConfirmedEvent);
     }
 
     private Set<Role> getCustomerRoles() {

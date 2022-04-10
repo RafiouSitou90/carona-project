@@ -2,6 +2,7 @@ package com.iesb.gab.raf.carona.api.entity.user;
 
 import com.iesb.gab.raf.carona.api.entity.AbstractBaseEntity;
 
+import com.iesb.gab.raf.carona.api.entity.customer.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,16 +42,16 @@ public class User extends AbstractBaseEntity implements UserDetails {
     private String password;
 
     @Column(name = "is_enabled")
-    private Boolean isEnabled;
+    private Boolean isEnabled = false;
 
     @Column(name = "is_non_expired")
-    private Boolean isNonExpired;
+    private Boolean isNonExpired = true;
 
     @Column(name = "is_non_locked")
-    private Boolean isNonLocked;
+    private Boolean isNonLocked = true;
 
     @Column(name = "is_credentials_non_expired")
-    private Boolean isCredentialsNonExpired;
+    private Boolean isCredentialsNonExpired = true;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
@@ -65,6 +66,9 @@ public class User extends AbstractBaseEntity implements UserDetails {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "user")
     private RefreshToken refreshToken;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "login")
+    private Customer customer;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
