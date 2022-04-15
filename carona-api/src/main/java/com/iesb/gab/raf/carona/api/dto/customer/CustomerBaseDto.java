@@ -4,17 +4,13 @@ import com.iesb.gab.raf.carona.api.dto.AbstractBaseDto;
 import com.iesb.gab.raf.carona.api.dto.address.AddressDto;
 import com.iesb.gab.raf.carona.api.entity.customer.Customer;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class CustomerBaseDto extends AbstractBaseDto implements Serializable {
 
     protected String cpf;
@@ -27,7 +23,7 @@ public class CustomerBaseDto extends AbstractBaseDto implements Serializable {
     protected AddressDto address;
 
     public CustomerBaseDto(final Customer customer) {
-        id = customer.getId();
+        super(customer);
         cpf = customer.getCpf();
         email = customer.getLogin().getEmail();
         firstName = customer.getFirstName();
@@ -36,7 +32,5 @@ public class CustomerBaseDto extends AbstractBaseDto implements Serializable {
         phoneNumber = customer.getPhoneNumber();
         avatar = customer.getAvatar();
         address = new AddressDto(customer.getAddress());
-        createdAt = customer.getCreatedAt();
-        updatedAt = customer.getUpdatedAt();
     }
 }

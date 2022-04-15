@@ -1,8 +1,8 @@
 package com.iesb.gab.raf.carona.api.entity.user;
 
 import com.iesb.gab.raf.carona.api.entity.AbstractBaseEntity;
-
 import com.iesb.gab.raf.carona.api.entity.customer.Customer;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -66,6 +66,9 @@ public class User extends AbstractBaseEntity implements UserDetails {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "user")
     private RefreshToken refreshToken;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "user")
+    private ResetPasswordToken resetPasswordToken;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "login")
     private Customer customer;

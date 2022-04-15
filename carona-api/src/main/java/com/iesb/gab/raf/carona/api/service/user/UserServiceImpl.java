@@ -6,6 +6,7 @@ import com.iesb.gab.raf.carona.api.entity.user.User;
 import com.iesb.gab.raf.carona.api.exception.ResourceAlreadyExistsException;
 import com.iesb.gab.raf.carona.api.exception.ResourceNotFoundException;
 import com.iesb.gab.raf.carona.api.payload.request.auth.AuthSignUpRequest;
+import com.iesb.gab.raf.carona.api.payload.request.user.UserReinitializePasswordRequest;
 import com.iesb.gab.raf.carona.api.repository.user.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -50,6 +51,13 @@ public class UserServiceImpl implements UserService {
     public void enableUser(Long id) throws ResourceNotFoundException {
         User user = getUserOrThrowException(id);
         user.setIsEnabled(true);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void upgradePassword(User user, UserReinitializePasswordRequest userReinitializePasswordRequest) {
+        user.setPassword(getPasswordHashed(userReinitializePasswordRequest.getNewPassword()));
 
         userRepository.save(user);
     }
