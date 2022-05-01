@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableAsync
@@ -17,5 +19,15 @@ public class AppConfiguration {
         bean.setTemplateLoaderPath("classpath:/templates/emails");
 
         return bean;
+    }
+
+    @Bean
+    public WebMvcConfigurer configure() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("*");
+            }
+        };
     }
 }
