@@ -8,7 +8,7 @@ public interface CustomerService {
 
     String[] ROLE_CUSTOMERS = {"ROLE_USER", "ROLE_CUSTOMER"};
 
-    CustomerFullDetailsDto save(CustomerCreateRequest customerCreateRequest) throws ResourceAlreadyExistsException;
+    CustomerFullDetailsDto save(CustomerCreateRequest customerCreateRequest, String loginUrl) throws ResourceAlreadyExistsException;
 
-    void confirmAccount(String token);
+    void confirmAccount(String token, String loginUrl);
 }

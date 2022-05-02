@@ -21,16 +21,27 @@ public class UserForgotPasswordController {
     private final UserForgotPasswordService userForgotPasswordService;
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<ResetPasswordTokenDto> processForgotPassword(@RequestBody @Valid UserPasswordResetRequest userPasswordResetRequest) {
-        return  new ResponseEntity<>(userForgotPasswordService.processForgotPassword(userPasswordResetRequest), HttpStatus.OK);
+    public ResponseEntity<ResetPasswordTokenDto> processForgotPassword(
+            @RequestBody @Valid UserPasswordResetRequest userPasswordResetRequest,
+            @RequestParam String resetUrl
+    ) {
+        return  new ResponseEntity<>(userForgotPasswordService.processForgotPassword(userPasswordResetRequest, resetUrl),
+                HttpStatus.OK);
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(
             @RequestBody @Valid UserReinitializePasswordRequest userReinitializePasswordRequest,
-            @RequestParam String token) {
-        userForgotPasswordService.resetPassword(userReinitializePasswordRequest, token);
+            @RequestParam String token, @RequestParam String loginUrl) {
+        userForgotPasswordService.resetPassword(userReinitializePasswordRequest, token, loginUrl);
 
         return  new ResponseEntity<>("User Password successfully reinitialized", HttpStatus.OK);
+    }
+
+    @PostMapping("/validate-reset-password-token")
+    public ResponseEntity<String> validateResetPasswordToken(@RequestParam String token) {
+        userForgotPasswordService.validateResetPasswordToken(token);
+
+        return  new ResponseEntity<>("User Password token is valid", HttpStatus.OK);
     }
 }

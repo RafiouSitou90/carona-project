@@ -56,7 +56,7 @@ public class JwtRefreshTokenServiceImpl implements JwtRefreshTokenService {
     @Override
     public RefreshToken verifyExpiration(RefreshToken refreshToken) throws RefreshTokenException {
 
-        if (refreshToken.getExpiresAt().compareTo(Instant.now()) < 0) {
+        if (refreshToken.getExpiresAt().isBefore(Instant.now())) {
             refreshTokenRepository.delete(refreshToken);
             throw new RefreshTokenException(
                     refreshToken.getToken(),

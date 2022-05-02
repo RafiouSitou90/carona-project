@@ -9,5 +9,6 @@
 </head>
 <body>
 <h1>Congrats ${fullName}! Your account has been successfully confirmed.</h1>
+<a href="${url}" target="_blank">Login</a>.
 </body>
 </html>

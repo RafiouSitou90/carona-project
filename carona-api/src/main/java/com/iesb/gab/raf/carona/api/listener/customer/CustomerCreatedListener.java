@@ -39,15 +39,17 @@ public class CustomerCreatedListener implements ApplicationListener<CustomerCrea
     @Async
     public void onApplicationEvent(final CustomerCreatedEvent event) {
         Customer customer = event.getEntity();
+        final String loginUrl = event.getLoginUrl();
+
         try {
-            MailRequest mailRequest = getCustomerCreatedMailRequest(customer);
+            MailRequest mailRequest = getCustomerCreatedMailRequest(customer, loginUrl);
             mailService.sendEmail(mailRequest);
         } catch (MailException | MessagingException | IOException mailException) {
             System.out.println(mailException.getMessage());
         }
     }
 
-    private MailRequest getCustomerCreatedMailRequest(Customer customer) throws IOException {
+    private MailRequest getCustomerCreatedMailRequest(final Customer customer, final String loginUrl) throws IOException {
         MailRequest mailRequest = new MailRequest();
         Map<String, Object> model = new HashMap<>();
         User user = customer.getLogin();
@@ -58,9 +60,10 @@ public class CustomerCreatedListener implements ApplicationListener<CustomerCrea
                 .withLocale(Locale.US)
                 .withZone(ZoneId.systemDefault());
 
-
         String url = String.format(
-                "http://localhost:8080/api/v1/customers/confirm/email?token=%s",  user.getConfirmationToken().getToken()
+                "http://localhost:8080/api/v1/customers/confirm/email?token=%s&loginUrl=%s",
+                user.getConfirmationToken().getToken(),
+                loginUrl
         );
         String expiration = dateTimeFormatter.format(expiresAt);
 

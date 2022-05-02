@@ -39,16 +39,19 @@ public class ResetPasswordTokenCreatedListener implements ApplicationListener<Re
     @Override
     public void onApplicationEvent(ResetPasswordTokenCreatedEvent event) {
         final ResetPasswordToken resetPasswordToken = event.getEntity();
+        final String resetUrl = event.getResetUrl();
 
         try {
-            MailRequest mailRequest = getResetPasswordTokenCreatedMailRequest(resetPasswordToken);
+            MailRequest mailRequest = getResetPasswordTokenCreatedMailRequest(resetPasswordToken, resetUrl);
             mailService.sendEmail(mailRequest);
         } catch (MailException | MessagingException | IOException mailException) {
             System.out.println(mailException.getMessage());
         }
     }
 
-    private MailRequest getResetPasswordTokenCreatedMailRequest(final ResetPasswordToken resetPasswordToken) throws IOException {
+    private MailRequest getResetPasswordTokenCreatedMailRequest(final ResetPasswordToken resetPasswordToken, String resetUrl)
+            throws IOException {
+
         MailRequest mailRequest = new MailRequest();
         Map<String, Object> model = new HashMap<>();
         final User user = resetPasswordToken.getUser();
@@ -60,8 +63,10 @@ public class ResetPasswordTokenCreatedListener implements ApplicationListener<Re
                 .withZone(ZoneId.systemDefault());
 
 
+//        "http://localhost:3000/auth/reset-password?token=%s"
         String url = String.format(
-                "http://localhost:3000/auth/reset-password?token=%s",
+                "%s%s",
+                resetUrl,
                 resetPasswordToken.getToken()
         );
         String expiration = dateTimeFormatter.format(expiresAt);

@@ -39,21 +39,28 @@ public class UserPasswordUpgradedListener implements ApplicationListener<UserPas
     @Override
     public void onApplicationEvent(UserPasswordUpgradedEvent event) {
         final ResetPasswordToken resetPasswordToken = event.getEntity();
+        final String loginUrl = event.getLoginUrl();
 
         try {
-            MailRequest mailRequest = getUserPasswordUpgradedMailRequest(resetPasswordToken);
+            MailRequest mailRequest = getUserPasswordUpgradedMailRequest(resetPasswordToken, loginUrl);
             mailService.sendEmail(mailRequest);
         } catch (MailException | MessagingException | IOException mailException) {
             System.out.println(mailException.getMessage());
         }
     }
 
-    private MailRequest getUserPasswordUpgradedMailRequest(final ResetPasswordToken resetPasswordToken) throws IOException {
+    private MailRequest getUserPasswordUpgradedMailRequest(final ResetPasswordToken resetPasswordToken, String loginUrl)
+            throws IOException {
+
         MailRequest mailRequest = new MailRequest();
         Map<String, Object> model = new HashMap<>();
         final User user = resetPasswordToken.getUser();
 
+        // "http://localhost:3000/auth/login"
+        String url = String.format("%s", loginUrl);
+
         model.put("fullName", user.getCustomer().getFullName() != null ? user.getCustomer().getFullName() : user.getUsername());
+        model.put("url", url);
 
         try {
             Template emailTemplate = freeMarkerConfig.getTemplate("user/password-upgraded.ftl");

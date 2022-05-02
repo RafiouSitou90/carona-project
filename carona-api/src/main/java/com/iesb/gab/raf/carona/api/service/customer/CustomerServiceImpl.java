@@ -45,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public CustomerFullDetailsDto save(CustomerCreateRequest customerCreateRequest) throws ResourceAlreadyExistsException {
+    public CustomerFullDetailsDto save(CustomerCreateRequest customerCreateRequest, String loginUrl) throws ResourceAlreadyExistsException {
 
         if (customerRepository.existsByCpf(customerCreateRequest.getCpf())) {
             throw new ResourceAlreadyExistsException(RESOURCE_NAME, "CPF", customerCreateRequest.getCpf());
@@ -70,13 +70,13 @@ public class CustomerServiceImpl implements CustomerService {
         customer = customerRepository.save(customer);
 
         customer.getLogin().setConfirmationToken(saveAuthorUserConfirmationToken(customer));
-        publishCustomerCreatedEvent(customer);
+        publishCustomerCreatedEvent(customer, loginUrl);
 
         return new CustomerFullDetailsDto(customer);
     }
 
     @Override
-    public void confirmAccount(String token) {
+    public void confirmAccount(String token, String loginUrl) {
         ConfirmationToken confirmationToken = confirmationTokenService.getByToken(token);
 
         if (confirmationToken.getConfirmedAt() != null) {
@@ -90,16 +90,17 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         confirmationToken = confirmationTokenService.setConfirmedAt(token);
-        publishCustomerConfirmedEvent(confirmationToken.getUser().getCustomer());
+        publishCustomerConfirmedEvent(confirmationToken.getUser().getCustomer(), loginUrl);
     }
 
-    private void publishCustomerCreatedEvent(final Customer customer) {
-        CustomerCreatedEvent customerCreatedEvent = new CustomerCreatedEvent(customer, this);
+    private void publishCustomerCreatedEvent(final Customer customer, final String loginUrl) {
+        CustomerCreatedEvent customerCreatedEvent = new CustomerCreatedEvent(customer, loginUrl, this);
         eventPublisher.publishEvent(customerCreatedEvent);
     }
 
-    private void publishCustomerConfirmedEvent(final Customer customer) {
-        CustomerAccountConfirmedEvent customerAccountConfirmedEvent = new CustomerAccountConfirmedEvent(customer, this);
+    private void publishCustomerConfirmedEvent(final Customer customer, final String loginUrl) {
+        CustomerAccountConfirmedEvent customerAccountConfirmedEvent = new CustomerAccountConfirmedEvent(customer,
+         loginUrl, this);
         eventPublisher.publishEvent(customerAccountConfirmedEvent);
     }
 

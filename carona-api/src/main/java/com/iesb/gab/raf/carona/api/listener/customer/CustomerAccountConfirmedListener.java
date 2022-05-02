@@ -34,21 +34,26 @@ public class CustomerAccountConfirmedListener implements ApplicationListener<Cus
     @Override
     public void onApplicationEvent(CustomerAccountConfirmedEvent event) {
         final Customer customer = event.getCustomer();
+        final String loginUrl = event.getLoginUrl();
 
         try {
-            MailRequest mailRequest = getCustomerAccountConfirmedMailRequest(customer);
+            MailRequest mailRequest = getCustomerAccountConfirmedMailRequest(customer, loginUrl);
             mailService.sendEmail(mailRequest);
         } catch (MailException | MessagingException | IOException mailException) {
             System.out.println(mailException.getMessage());
         }
     }
 
-    private MailRequest getCustomerAccountConfirmedMailRequest(final Customer customer) throws IOException {
+    private MailRequest getCustomerAccountConfirmedMailRequest(final Customer customer, String loginUrl) throws IOException {
         MailRequest mailRequest = new MailRequest();
         Map<String, Object> model = new HashMap<>();
         final User user = customer.getLogin();
 
+        // "http://localhost:3000/auth/login"
+        String url = String.format("%s", loginUrl);
+
         model.put("fullName", customer.getFullName() != null ? customer.getFullName() : user.getUsername());
+        model.put("url", url);
 
         try {
             Template emailTemplate = freeMarkerConfig.getTemplate("customer/account-confirmed.ftl");

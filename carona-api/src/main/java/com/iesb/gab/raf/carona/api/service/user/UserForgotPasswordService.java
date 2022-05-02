@@ -13,7 +13,9 @@ public interface UserForgotPasswordService {
 
     ResetPasswordToken save(ResetPasswordToken resetPasswordToken);
 
-    ResetPasswordTokenDto processForgotPassword(UserPasswordResetRequest userPasswordResetRequest) throws ResourceNotFoundException;
+    ResetPasswordTokenDto processForgotPassword(UserPasswordResetRequest userPasswordResetRequest, String resetUrl) throws ResourceNotFoundException;
 
-    void resetPassword(UserReinitializePasswordRequest userReinitializePasswordRequest, String token) throws ResourceNotFoundException, ResourceBadRequestException;
+    void resetPassword(UserReinitializePasswordRequest userReinitializePasswordRequest, String token, String loginUrl) throws ResourceNotFoundException, ResourceBadRequestException;
+
+    void validateResetPasswordToken(String token);
 }

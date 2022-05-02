@@ -39,7 +39,9 @@ public class UserForgotPasswordServiceImpl implements UserForgotPasswordService 
     }
 
     @Override
-    public ResetPasswordTokenDto processForgotPassword(UserPasswordResetRequest userPasswordResetRequest) throws ResourceNotFoundException {
+    public ResetPasswordTokenDto processForgotPassword(UserPasswordResetRequest userPasswordResetRequest, String resetUrl)
+            throws ResourceNotFoundException {
+
         Optional<User> user = userRepository.findByEmailIgnoreCase(userPasswordResetRequest.getEmail());
 
         if (user.isEmpty()) {
@@ -59,7 +61,7 @@ public class UserForgotPasswordServiceImpl implements UserForgotPasswordService 
                     .withExpiresAt(expiresAt)
                     .build();
             newResetPasswordToken = save(newResetPasswordToken);
-            publishResetPasswordCreatedEvent(newResetPasswordToken);
+            publishResetPasswordCreatedEvent(newResetPasswordToken, resetUrl);
 
             return new ResetPasswordTokenDto(newResetPasswordToken);
         }
@@ -68,14 +70,42 @@ public class UserForgotPasswordServiceImpl implements UserForgotPasswordService 
         resetPasswordTokenFound.setToken(token);
         resetPasswordTokenFound.setExpiresAt(expiresAt);
         resetPasswordTokenFound = save(resetPasswordTokenFound);
-        publishResetPasswordCreatedEvent(resetPasswordTokenFound);
+        publishResetPasswordCreatedEvent(resetPasswordTokenFound, resetUrl);
 
         return new ResetPasswordTokenDto(resetPasswordTokenFound);
     }
 
     @Override
-    public void resetPassword(UserReinitializePasswordRequest userReinitializePasswordRequest, String token)
+    public void resetPassword(UserReinitializePasswordRequest userReinitializePasswordRequest, String token, String loginUrl)
             throws ResourceNotFoundException, ResourceBadRequestException {
+
+        ResetPasswordToken resetPasswordTokenFound = validateToken(token);
+
+        userService.upgradePassword(resetPasswordTokenFound.getUser(), userReinitializePasswordRequest);
+        resetPasswordTokenFound.setToken(null);
+        resetPasswordTokenRepository.save(resetPasswordTokenFound);
+        publishUserPasswordUpgradedEvent(resetPasswordTokenFound, loginUrl);
+    }
+
+    @Override
+    public void validateResetPasswordToken(String token) {
+        validateToken(token);
+    }
+
+    private void publishResetPasswordCreatedEvent(final ResetPasswordToken resetPasswordToken, String resetUrl) {
+        ResetPasswordTokenCreatedEvent resetPasswordTokenCreatedEvent =
+                new ResetPasswordTokenCreatedEvent(resetPasswordToken, resetUrl, this);
+        eventPublisher.publishEvent(resetPasswordTokenCreatedEvent);
+    }
+
+    private void publishUserPasswordUpgradedEvent(final ResetPasswordToken resetPasswordToken, String loginUrl) {
+        UserPasswordUpgradedEvent userPasswordUpgradedEvent =
+                new UserPasswordUpgradedEvent(resetPasswordToken, loginUrl, this);
+        eventPublisher.publishEvent(userPasswordUpgradedEvent);
+    }
+
+    private ResetPasswordToken validateToken(String token) {
+
         Optional<ResetPasswordToken> resetPasswordToken = resetPasswordTokenRepository.findByToken(token);
 
         if (resetPasswordToken.isEmpty()) {
@@ -84,25 +114,10 @@ public class UserForgotPasswordServiceImpl implements UserForgotPasswordService 
 
         ResetPasswordToken resetPasswordTokenFound = resetPasswordToken.get();
 
-        if (resetPasswordTokenFound.getExpiresAt().isAfter(Instant.now())) {
+        if (resetPasswordTokenFound.getExpiresAt().isBefore(Instant.now())) {
             throw new ResourceBadRequestException("User Reset Password Token Expired");
         }
 
-        userService.upgradePassword(resetPasswordTokenFound.getUser(), userReinitializePasswordRequest);
-        resetPasswordTokenFound.setToken(null);
-        resetPasswordTokenRepository.save(resetPasswordTokenFound);
-        publishUserPasswordUpgradedEvent(resetPasswordTokenFound);
-    }
-
-    private void publishResetPasswordCreatedEvent(final ResetPasswordToken resetPasswordToken) {
-        ResetPasswordTokenCreatedEvent resetPasswordTokenCreatedEvent =
-                new ResetPasswordTokenCreatedEvent(resetPasswordToken, this);
-        eventPublisher.publishEvent(resetPasswordTokenCreatedEvent);
-    }
-
-    private void publishUserPasswordUpgradedEvent(final ResetPasswordToken resetPasswordToken) {
-        UserPasswordUpgradedEvent userPasswordUpgradedEvent =
-                new UserPasswordUpgradedEvent(resetPasswordToken, this);
-        eventPublisher.publishEvent(userPasswordUpgradedEvent);
+        return resetPasswordTokenFound;
     }
 }
