@@ -64,11 +64,7 @@ public class ResetPasswordTokenCreatedListener implements ApplicationListener<Re
 
 
 //        "http://localhost:3000/auth/reset-password?token=%s"
-        String url = String.format(
-                "%s%s",
-                resetUrl,
-                resetPasswordToken.getToken()
-        );
+        String url = String.format("%s%s", resetUrl, resetPasswordToken.getToken());
         String expiration = dateTimeFormatter.format(expiresAt);
 
         model.put("fullName", user.getCustomer().getFullName() != null ? user.getCustomer().getFullName() : user.getUsername());
