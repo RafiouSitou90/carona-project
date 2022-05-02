@@ -12,6 +12,7 @@ import freemarker.template.TemplateException;
 
 import lombok.AllArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.MailException;
 import org.springframework.scheduling.annotation.Async;
@@ -34,6 +35,9 @@ public class CustomerCreatedListener implements ApplicationListener<CustomerCrea
 
     private final MailService mailService;
     private final Configuration freeMarkerConfig;
+
+    @Value("${gabraf.app.backend.api.url}")
+    private String apiBackendURL;
 
     @Override
     @Async
@@ -60,8 +64,10 @@ public class CustomerCreatedListener implements ApplicationListener<CustomerCrea
                 .withLocale(Locale.US)
                 .withZone(ZoneId.systemDefault());
 
+//        "http://localhost:8080/api/v1/customers/confirm/email?token=%s&loginUrl=%s",
         String url = String.format(
-                "http://localhost:8080/api/v1/customers/confirm/email?token=%s&loginUrl=%s",
+                "%s/api/v1/customers/confirm/email?token=%s&loginUrl=%s",
+                apiBackendURL,
                 user.getConfirmationToken().getToken(),
                 loginUrl
         );
