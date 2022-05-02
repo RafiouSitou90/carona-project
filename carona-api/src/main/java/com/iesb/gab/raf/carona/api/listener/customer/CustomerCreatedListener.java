@@ -10,8 +10,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-import lombok.AllArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.MailException;
@@ -30,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 
 @Component
-@AllArgsConstructor
 public class CustomerCreatedListener implements ApplicationListener<CustomerCreatedEvent> {
 
     private final MailService mailService;
@@ -38,6 +35,11 @@ public class CustomerCreatedListener implements ApplicationListener<CustomerCrea
 
     @Value("${gabraf.app.backend.api.url}")
     private String apiBackendURL;
+
+    public CustomerCreatedListener(MailService mailService, Configuration freeMarkerConfig) {
+        this.mailService = mailService;
+        this.freeMarkerConfig = freeMarkerConfig;
+    }
 
     @Override
     @Async
