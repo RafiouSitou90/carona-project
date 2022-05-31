@@ -2,6 +2,7 @@ package com.iesb.gab.raf.carona.api.entity.customer;
 
 import com.iesb.gab.raf.carona.api.entity.AbstractBaseEntity;
 import com.iesb.gab.raf.carona.api.entity.address.Address;
+import com.iesb.gab.raf.carona.api.entity.car.Car;
 import com.iesb.gab.raf.carona.api.entity.user.User;
 
 import lombok.AllArgsConstructor;
@@ -48,6 +49,9 @@ public class Customer extends AbstractBaseEntity {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "driver")
+    private Car car;
 
     public String getFullName() {
         if (firstName == null && lastName == null) {
