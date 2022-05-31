@@ -29,10 +29,10 @@ public class JwtUtils implements Serializable {
     private String secretKey;
 
     @Value("${gabraf.app.jwt.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    private Long jwtExpirationMs;
 
     @Value("${gabraf.app.jwt.jwtRefreshExpirationMs}")
-    private int jwtRefreshExpirationMs;
+    private Long jwtRefreshExpirationMs;
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -116,7 +116,7 @@ public class JwtUtils implements Serializable {
         return expiration.before(new Date());
     }
 
-    private String createToken(Map<String, Object> claims, String subject, int expirationTimeMs) {
+    private String createToken(Map<String, Object> claims, String subject, Long expirationTimeMs) {
 
         return Jwts.builder()
                 .setClaims(claims)
