@@ -115,6 +115,40 @@ public class RideProgramServiceImpl implements RideProgramService {
         rideProgramRepository.delete(rideProgram);
     }
 
+    @Override
+    public List<RideProgramDto> search(Long from, Long to, String day, String time) {
+        City cityFrom = cityService.getCityOrNull(from);
+        City cityTo = cityService.getCityOrNull(to);
+        List<RideProgram> ridePrograms;
+        List<RideProgramDto> rideProgramsDto = new ArrayList<>();
+
+        if (day == null && time == null) {
+            ridePrograms = rideProgramRepository.findAllByCityFromAndCityTo(cityFrom, cityTo);
+        } else if (day != null && time == null) {
+            ridePrograms = rideProgramRepository.findAllByCityFromAndCityToAndDay(cityFrom, cityTo, day);
+        } else if (day == null) {
+            ridePrograms = rideProgramRepository
+                    .findAllByCityFromAndCityToAndDepartureTime(cityFrom, cityTo, time);
+        } else {
+            ridePrograms = rideProgramRepository
+                    .findAllByCityFromAndCityToAndDayAndDepartureTime(cityFrom, cityTo, day, time);
+        }
+
+        ridePrograms.forEach(rideProgram -> rideProgramsDto.add(new RideProgramDto(rideProgram)));
+
+        return rideProgramsDto;
+    }
+
+    @Override
+    public List<RideProgramDto> allRides() {
+        List<RideProgram> ridePrograms = rideProgramRepository.findAll();
+        List<RideProgramDto> rideProgramsDto = new ArrayList<>();
+
+        ridePrograms.forEach(rideProgram -> rideProgramsDto.add(new RideProgramDto(rideProgram)));
+
+        return rideProgramsDto;
+    }
+
     private RideProgram getRideProgramOrThrowException(final Long id) {
         return rideProgramRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "Id", id));

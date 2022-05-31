@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -32,5 +33,16 @@ public class CityServiceImpl implements CityService {
     public City getCityOrThrowException(Long id) throws ResourceNotFoundException {
         return cityRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(RESOURCE_NAME, "Id", id));
+    }
+
+    @Override
+    public City getCityOrNull(Long id) {
+        Optional<City> city = cityRepository.findById(id);
+
+        if (city.isEmpty()) {
+            return null;
+        }
+
+        return city.get();
     }
 }

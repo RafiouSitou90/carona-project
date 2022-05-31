@@ -10,4 +10,5 @@ public interface CityService {
     List<CityDto> getCities();
 
     City getCityOrThrowException(Long id) throws ResourceNotFoundException;
+    City getCityOrNull(Long id);
 }

@@ -14,4 +14,8 @@ public interface RideProgramService {
     RideProgramDto updateProgram(Long id, RideProgramRequest rideProgramRequest);
 
     void deleteProgram(Long id);
+
+    List<RideProgramDto> search(Long from, Long to, String day, String time);
+
+    List<RideProgramDto> allRides();
 }

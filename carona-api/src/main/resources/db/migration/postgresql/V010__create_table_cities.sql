@@ -16,6 +16,8 @@ CREATE INDEX city_name_idx ON tab_cities (name);
 INSERT INTO tab_cities (name, created_at)
 VALUES ('Águas Claras', NOW()),
        ('Arniqueira', NOW()),
+       ('Asa Sul', NOW()),
+       ('Asa Norte', NOW()),
        ('Brasilândia', NOW()),
        ('Candangolândia', NOW()),
        ('Ceilândia', NOW()),
