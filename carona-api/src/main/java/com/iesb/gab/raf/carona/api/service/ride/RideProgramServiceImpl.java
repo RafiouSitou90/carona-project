@@ -149,6 +149,23 @@ public class RideProgramServiceImpl implements RideProgramService {
         return rideProgramsDto;
     }
 
+    @Override
+    public RideProgramDto getProgramsByDriverAndById(Long id) {
+        RideProgram rideProgram = getRideProgramOrThrowException(id);
+
+        Utils.denyAccessUnlessGranted(
+                rideProgram.getCar().getDriver().getLogin(),
+                "Access denied! You don't have permission to access this ride program"
+        );
+
+        return new RideProgramDto(rideProgram);
+    }
+
+    @Override
+    public RideProgramDto getOneById(Long id) {
+        return new RideProgramDto(getRideProgramOrThrowException(id));
+    }
+
     private RideProgram getRideProgramOrThrowException(final Long id) {
         return rideProgramRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "Id", id));

@@ -38,6 +38,11 @@ public class RideProgramController {
         return new ResponseEntity<>(rideProgramService.getAllProgramsByDriver(), HttpStatus.OK);
     }
 
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<RideProgramDto> getProgramsByDriverAndById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(rideProgramService.getProgramsByDriverAndById(id), HttpStatus.OK);
+    }
+
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<String> deleteProgram(@PathVariable("id") Long id) {
         rideProgramService.deleteProgram(id);

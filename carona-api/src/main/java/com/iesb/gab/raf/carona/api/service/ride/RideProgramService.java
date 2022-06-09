@@ -18,4 +18,8 @@ public interface RideProgramService {
     List<RideProgramDto> search(Long from, Long to, String day, String time);
 
     List<RideProgramDto> allRides();
+
+    RideProgramDto getProgramsByDriverAndById(Long id);
+
+    RideProgramDto getOneById(Long id);
 }
