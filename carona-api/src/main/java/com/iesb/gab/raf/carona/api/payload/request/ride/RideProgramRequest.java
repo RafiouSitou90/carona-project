@@ -1,12 +1,12 @@
 package com.iesb.gab.raf.carona.api.payload.request.ride;
 
-import com.iesb.gab.raf.carona.api.entity.city.City;
-
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -23,4 +23,7 @@ public final class RideProgramRequest {
 
     @NotBlank(message = "The departure time cannot be blank")
     private String departureTime;
+
+    @DecimalMin(value = "0.01")
+    private BigDecimal price;
 }

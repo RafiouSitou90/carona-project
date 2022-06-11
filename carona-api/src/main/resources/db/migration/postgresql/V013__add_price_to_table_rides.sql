@@ -1,0 +1,2 @@
+ALTER TABLE tab_rides_programs
+    ADD COLUMN price DECIMAL DEFAULT NULL

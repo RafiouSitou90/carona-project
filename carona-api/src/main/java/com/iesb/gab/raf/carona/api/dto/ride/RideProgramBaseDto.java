@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -21,6 +22,7 @@ public class RideProgramBaseDto extends AbstractBaseDto implements Serializable 
     protected String departureTime;
     protected Boolean isActive;
     protected Boolean isFull;
+    protected BigDecimal price;
 
     public RideProgramBaseDto(final RideProgram rideProgram) {
         super(rideProgram);
@@ -31,5 +33,6 @@ public class RideProgramBaseDto extends AbstractBaseDto implements Serializable 
         departureTime = rideProgram.getDepartureTime();
         isActive = rideProgram.getIsActive();
         isFull = rideProgram.getIsFull();
+        price = rideProgram.getPrice();
     }
 }

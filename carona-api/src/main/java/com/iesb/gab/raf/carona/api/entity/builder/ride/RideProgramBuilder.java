@@ -5,6 +5,7 @@ import com.iesb.gab.raf.carona.api.entity.city.City;
 import com.iesb.gab.raf.carona.api.entity.ride.RideProgram;
 import com.iesb.gab.raf.carona.api.entity.ride.RideReservation;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 public final class RideProgramBuilder {
@@ -56,6 +57,12 @@ public final class RideProgramBuilder {
 
     public RideProgramBuilder withIsFull(final Boolean isFull) {
         rideProgram.setIsFull(isFull);
+
+        return this;
+    }
+
+    public RideProgramBuilder withPrice(final BigDecimal price) {
+        rideProgram.setPrice(price);
 
         return this;
     }

@@ -52,6 +52,7 @@ public class RideProgramServiceImpl implements RideProgramService {
                 .withCityTo(cityTo)
                 .withDay(rideProgramRequest.getDay())
                 .withDepartureTime(rideProgramRequest.getDepartureTime())
+                .withPrice(rideProgramRequest.getPrice())
                 .build();
 
         return new RideProgramDto(rideProgramRepository.save(rideProgram));
@@ -99,6 +100,7 @@ public class RideProgramServiceImpl implements RideProgramService {
 
         rideProgram.setDay(rideProgramRequest.getDay());
         rideProgram.setDepartureTime(rideProgramRequest.getDepartureTime());
+        rideProgram.setPrice(rideProgramRequest.getPrice());
 
         return new RideProgramDto(rideProgramRepository.save(rideProgram));
     }

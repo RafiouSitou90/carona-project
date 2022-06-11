@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -45,6 +46,9 @@ public class RideProgram extends AbstractBaseEntity {
 
     @Column(name = "is_full")
     private Boolean isFull = false;
+
+    @Column(precision = 10, scale = 2, name = "price")
+    private BigDecimal price;
 
     @OneToMany(mappedBy = "rideProgram", fetch = FetchType.EAGER, targetEntity = RideReservation.class)
     private Set<RideReservation> ridesReservations = new HashSet<>();
